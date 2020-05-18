@@ -4,6 +4,7 @@ This repository hosts the code for US Tech's assignment frontend.
 ### Technical Stack
 - HTML/CSS
 - Javascript
+- Bootstrap
 
 ### Steps to setup server.
 - First, ensure that Python is installed. 
