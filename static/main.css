@@ -84,7 +84,6 @@
   border: 2px solid white;
 }
 
-
 .winner {
   color: chartreuse;
   font-weight: bolder;
@@ -115,4 +114,21 @@
   color: gold;
   font-family: 'Courier New', Courier, monospace;
   padding-top: 5px;
+}
+
+.draggable {
+  background-color: white;
+  font-weight: bold;
+  color: black;
+  position: absolute;
+  border: 4px solid greenyellow;
+  border-radius: 50%;
+  cursor: pointer;
+  float: right;
+  right: 10%;
+}
+
+.play-btn {
+  margin-bottom: 0px;
+  padding: 12px;
 }

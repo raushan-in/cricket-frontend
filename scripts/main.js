@@ -36,7 +36,7 @@ const renderTeamDetail = (team_name, data) => {
   let content_area = $("#contents")
   content_area.empty();
   data.forEach(ele => {
-    let player_name = `${ele.first_name} ${ele.last_name}`
+    let player_name = (ele.last_name != null) ? `${ele.first_name} ${ele.last_name}` : `${ele.first_name}`
     content_area.append(`
     <div class="w3-third w3-margin-bottom">
     <img src="${ele.image}" height="150" width="31" style="width:100%; border-radius:50%;" class="w3-hover-opacity">
