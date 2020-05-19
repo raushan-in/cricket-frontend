@@ -1,23 +1,20 @@
-const base = "http://127.0.0.1:8000"
-
-
 $( document ).ready(function() {
-  getData(base+'/team/list/')
+  getData('/team/list/')
   .then(data  => updateChoiceField(data));
-
-  bothSideConfetti();
 });
 
 
 const updateChoiceField = (data) => {
     data.forEach(ele => {
         $('#team1').append(`<option value="${ele.pk}"> ${ele.name} </option>`); 
+        $('#first_team').append(`<option value="${ele.pk}"> ${ele.name} </option>`); 
         $('#team2').append(`<option value="${ele.pk}"> ${ele.name} </option>`);
+        $('#second_team').append(`<option value="${ele.pk}"> ${ele.name} </option>`);
     });
 }
 
 $("#teams_compare").submit(function (e) { 
-    
+    e.preventDefault();
     inputs={};
     input_serialized =  $(this).serializeArray();
     input_serialized.forEach(field => {
@@ -25,16 +22,16 @@ $("#teams_compare").submit(function (e) {
     })
     
     if (inputs['first_team_id'] == inputs['second_team_id']){
-        alert("team should be different.")
-        return
+      sameSelectionError()
+    }else{
+      getComparison(inputs);
+      $("#teams_compare").trigger("reset");
     }
-    e.preventDefault();
-    getComparison(inputs);
-    $("#teams_compare").trigger("reset");
+    
   });
 
   let getComparison = (inputs) =>{
-    getData(base+`/match/filter/${inputs['first_team_id']}/${inputs['second_team_id']}/`)
+    getData(`/match/filter/${inputs['first_team_id']}/${inputs['second_team_id']}/`)
             .then(data  => renderComparison(data));
   }
 
@@ -76,8 +73,67 @@ const getMonth = (month_array) => {
 }
 
 
-const getData = async (path='', options={}) => {
-    let response = await fetch(path, options);
-    let data = await response.json()
-    return data;
-};
+$( ".draggable" ).draggable({});
+$('.draggable').click(function(e){});
+$(".draggable").effect( "shake" );
+
+$(".play-btn").click(function() {
+    $("#playModal").modal('show');
+});
+
+
+$("#playModalForm").submit(function (e) { 
+  e.preventDefault();
+  inputs={};
+  input_serialized =  $(this).serializeArray();
+
+  input_serialized.forEach(field => {
+      inputs[field.name] = field.value;
+  })
+  
+  if (inputs['first_team'] == inputs['second_team']){
+      $("#teams_compare").trigger("reset");
+      sameSelectionError()
+  }else{
+    $("#play-submit-btn").prop('disabled', true);
+    getMatchResult(inputs);
+  }
+});
+
+
+let getMatchResult = (inputs) =>{
+  const options = {
+    method: 'POST',
+    body: JSON.stringify(inputs),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  }
+  getData(`/match/create/`, options)
+          .then(data  => renderMatchResult(data));
+}
+
+const renderMatchResult = (data) => {
+  $("#play-submit-btn").prop('disabled', false);
+  $("#teams_compare").trigger("reset");
+  $("#playModal").modal('hide');
+
+  bothSideConfetti();
+  
+  Swal.fire({
+    title: `'${data.winner_team}' won the match.`,
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutUp'
+    }
+  })
+}
+
+const sameSelectionError = () =>{
+  Swal.fire({
+    icon: 'error',
+    title: 'Selected teams should be different.',
+  })
+}

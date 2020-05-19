@@ -1,9 +1,6 @@
 
-const base = "http://127.0.0.1:8000"
-
-
 $( document ).ready(function() {
-  getData(base+'/team/list/')
+  getData('/team/list/')
   .then(data  => renderTeam(data));
 });
 
@@ -26,7 +23,7 @@ const renderTeam = (data) => {
 
 const getTeamDetail = (team_id=0, team_name="") => {
     if (team_id != 0){
-      getData(base+`/team/players/${team_id}/`)
+      getData(`/team/players/${team_id}/`)
       .then(data  => renderTeamDetail(team_name, data));
     }
 }
@@ -36,7 +33,7 @@ const renderTeamDetail = (team_name, data) => {
   let content_area = $("#contents")
   content_area.empty();
   data.forEach(ele => {
-    let player_name = `${ele.first_name} ${ele.last_name}`
+    let player_name = (ele.last_name != null) ? `${ele.first_name} ${ele.last_name}` : `${ele.first_name}`
     content_area.append(`
     <div class="w3-third w3-margin-bottom">
     <img src="${ele.image}" height="150" width="31" style="width:100%; border-radius:50%;" class="w3-hover-opacity">
@@ -54,7 +51,7 @@ const getPlayerStats = (player_id=0, player_name="") => {
   if (team_id != 0){
     $("#statsModal").modal("show");
     $('.modal-title').html(`Player : <spam style="color:green"> ${player_name}</spam>`);
-    getData(base+`/player/stats/${player_id}/`)
+    getData(`/player/stats/${player_id}/`)
     .then(data  => updateModalBody(data));
   }
 }
@@ -74,10 +71,3 @@ const updateModalBody = (data) => {
       $('.modal-body').html(body);
   }
 }
-
-const getData = async (path='', options={}) => {
-    let response = await fetch(path, options);
-    let data = await response.json()
-    return data;
-};
-
