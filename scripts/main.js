@@ -75,9 +75,30 @@ const updateModalBody = (data) => {
   }
 }
 
+
+const responseError = (status) =>{
+  Swal.fire({
+    icon: 'error',
+    title: 'Error in fetching information.',
+    text: `STATUS: ${status}`
+  })
+}
+
+const connectionError = (status) =>{
+  Swal.fire({
+    icon: 'error',
+    title: 'Connection Error',
+    text: `Make sure server is running.`
+  })
+}
+
 const getData = async (path='', options={}) => {
-    let response = await fetch(path, options);
+  let response = await fetch(path, options)
+  .catch(err => { connectionError()})
+  if (response.status == 200){
     let data = await response.json()
     return data;
+  }else{
+    responseError(response.status);
+  }
 };
-
