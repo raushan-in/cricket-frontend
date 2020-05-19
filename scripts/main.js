@@ -1,9 +1,6 @@
 
-const base = "http://127.0.0.1:8000"
-
-
 $( document ).ready(function() {
-  getData(base+'/team/list/')
+  getData('/team/list/')
   .then(data  => renderTeam(data));
 });
 
@@ -26,7 +23,7 @@ const renderTeam = (data) => {
 
 const getTeamDetail = (team_id=0, team_name="") => {
     if (team_id != 0){
-      getData(base+`/team/players/${team_id}/`)
+      getData(`/team/players/${team_id}/`)
       .then(data  => renderTeamDetail(team_name, data));
     }
 }
@@ -54,7 +51,7 @@ const getPlayerStats = (player_id=0, player_name="") => {
   if (team_id != 0){
     $("#statsModal").modal("show");
     $('.modal-title').html(`Player : <spam style="color:green"> ${player_name}</spam>`);
-    getData(base+`/player/stats/${player_id}/`)
+    getData(`/player/stats/${player_id}/`)
     .then(data  => updateModalBody(data));
   }
 }
@@ -74,31 +71,3 @@ const updateModalBody = (data) => {
       $('.modal-body').html(body);
   }
 }
-
-
-const responseError = (status) =>{
-  Swal.fire({
-    icon: 'error',
-    title: 'Error in fetching information.',
-    text: `STATUS: ${status}`
-  })
-}
-
-const connectionError = (status) =>{
-  Swal.fire({
-    icon: 'error',
-    title: 'Connection Error',
-    text: `Make sure server is running.`
-  })
-}
-
-const getData = async (path='', options={}) => {
-  let response = await fetch(path, options)
-  .catch(err => { connectionError()})
-  if (response.status == 200){
-    let data = await response.json()
-    return data;
-  }else{
-    responseError(response.status);
-  }
-};
